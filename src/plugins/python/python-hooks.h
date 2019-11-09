@@ -24,11 +24,12 @@
 #define _GTKPARASITE_PYTHON_MODULE_H_
 
 #include <glib.h>
+#include <Python.h>
 
 
 typedef void (*ParasitePythonLogger)(const char *text, gpointer user_data);
 
-int parasite_python_init(char **error);
+PyObject* parasite_python_init(char **error);
 void parasite_python_done(void);
 void parasite_python_run(const char *command,
                          ParasitePythonLogger stdout_logger,

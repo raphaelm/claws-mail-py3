@@ -82,7 +82,7 @@ capture_stdin(PyObject *self, PyObject *args)
 {
     /* Return an empty string.
      * This is what read() returns when hitting EOF. */
-    return PyString_FromString("");
+    return PyBytes_FromString("");
 }
 
 static PyObject *
@@ -123,12 +123,24 @@ is_blacklisted(void)
 }
 #endif // ENABLE_PYTHON
 
-int
+static struct PyModuleDef moduledef = {
+	PyModuleDef_HEAD_INIT,
+	"parasite",
+    NULL,
+	-1,
+	parasite_python_methods,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+
+PyObject*
 parasite_python_init(char **error)
 {
 #ifdef ENABLE_PYTHON
     struct sigaction old_sigint;
-    PyObject *pygtk;
+    PyObject *pygtk, *module;
 
     if (is_blacklisted()) {
       *error = g_strdup("Application is blacklisted");
@@ -152,9 +164,10 @@ parasite_python_init(char **error)
     if (!Py_IsInitialized())
         Py_Initialize();
 
+    module = PyModule_Create(&moduledef);
+
     sigaction(SIGINT, &old_sigint, NULL);
 
-    Py_InitModule("parasite", parasite_python_methods);
     if(PyRun_SimpleString(
         "import parasite\n"
         "import sys\n"
@@ -204,9 +217,9 @@ parasite_python_init(char **error)
          */
         if (cobject != NULL)
         {
-            if (PyCObject_Check(cobject)) {
+            if (PyCapsule_CheckExact(cobject)) {
                 _PyGtk_API = (struct _PyGtk_FunctionStruct*)
-                PyCObject_AsVoidPtr(cobject);
+                PyCapsule_GetPointer(cobject, "gtk._gtk._PyGtk_API");
             }
 #if PY_VERSION_HEX >= 0x02070000
             else if (PyCapsule_IsValid(cobject, "gtk._gtk._PyGtk_API")) {
@@ -226,8 +239,9 @@ parasite_python_init(char **error)
     }
 
     python_enabled = TRUE;
+    return module;
 #endif // ENABLE_PYTHON
-    return !0;
+    return NULL;
 }
 
 void
@@ -294,7 +308,7 @@ parasite_python_run(const char *command,
     if (obj != NULL && obj != Py_None) {
        PyObject *repr = PyObject_Repr(obj);
        if (repr != NULL) {
-           char *string = PyString_AsString(repr);
+           char *string = PyBytes_AsString(repr);
 
            if (stdout_logger != NULL) {
                stdout_logger(string, user_data);

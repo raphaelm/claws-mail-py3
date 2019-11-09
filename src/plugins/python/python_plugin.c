@@ -595,9 +595,9 @@ static PyObject *get_StringIO_instance(void)
   PyObject *class_StringIO = NULL;
   PyObject *inst_StringIO = NULL;
 
-  module_StringIO = PyImport_ImportModule("cStringIO");
+  module_StringIO = PyImport_ImportModule("io");
   if(!module_StringIO) {
-    debug_print("Error getting traceback: Could not import module cStringIO\n");
+    debug_print("Error getting traceback: Could not import module io\n");
     goto done;
   }
 
@@ -648,7 +648,7 @@ static char* get_exception_information(PyObject *inst_StringIO)
     goto done;
   }
 
-  retval = g_strdup(PyString_AsString(result_getvalue));
+  retval = g_strdup(PyBytes_AsString(result_getvalue));
 
 done:
 
@@ -686,6 +686,10 @@ gint plugin_init(gchar **error)
   if(!make_sure_directories_exist(error))
     goto err;
 
+  /* register moduke */
+  PyImport_AppendInittab("clawsmail", initclawsmail);
+  PyImport_AppendInittab("parasite", parasite_python_init);
+
   /* initialize python interpreter */
   Py_Initialize();
 
@@ -694,23 +698,8 @@ gint plugin_init(gchar **error)
    * an error occurred. */
   inst_StringIO = get_StringIO_instance();
 
-  /* initialize Claws Mail Python module */
-  initclawsmail();
-  if(PyErr_Occurred()) {
-    *error = get_exception_information(inst_StringIO);
-    goto err;
-  }
-
   if(PyRun_SimpleString("import clawsmail") == -1) {
     *error = g_strdup("Error importing the clawsmail module");
-    goto err;
-  }
-
-  /* initialize python interactive shell */
-  log_handler = g_log_set_handler(NULL, G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO, log_func, NULL);
-  parasite_retval = parasite_python_init(error);
-  g_log_remove_handler(NULL, log_handler);
-  if(!parasite_retval) {
     goto err;
   }
 
