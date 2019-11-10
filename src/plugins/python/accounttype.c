@@ -54,21 +54,21 @@ static int Account_compare(clawsmail_AccountObject *obj1, clawsmail_AccountObjec
 static PyObject* Account_str(clawsmail_AccountObject *self)
 {
   if(self->account && self->account->account_name)
-    return PyBytes_FromFormat("Account: %s", self->account->account_name);
+    return PyUnicode_FromFormat("Account: %s", self->account->account_name);
   Py_RETURN_NONE;
 }
 
 static PyObject* get_account_name(clawsmail_AccountObject *self, void *closure)
 {
   if(self->account && self->account->account_name)
-    return PyBytes_FromString(self->account->account_name);
+    return PyUnicode_FromString(self->account->account_name);
   Py_RETURN_NONE;
 }
 
 static PyObject* get_address(clawsmail_AccountObject *self, void *closure)
 {
   if(self->account && self->account->address)
-    return PyBytes_FromString(self->account->address);
+    return PyUnicode_FromString(self->account->address);
   Py_RETURN_NONE;
 }
 

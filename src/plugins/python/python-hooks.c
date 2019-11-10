@@ -82,7 +82,7 @@ capture_stdin(PyObject *self, PyObject *args)
 {
     /* Return an empty string.
      * This is what read() returns when hitting EOF. */
-    return PyBytes_FromString("");
+    return PyUnicode_FromString("");
 }
 
 static PyObject *

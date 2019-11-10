@@ -83,7 +83,7 @@ static int Folder_init(clawsmail_FolderObject *self, PyObject *args, PyObject *k
 
 static PyObject* Folder_str(clawsmail_FolderObject *self)
 {
-  return PyBytes_FromFormat("Folder: %s", self->folderitem->name);
+  return PyUnicode_FromFormat("Folder: %s", self->folderitem->name);
 }
 
 static PyObject* Folder_get_identifier(clawsmail_FolderObject *self, PyObject *args)
@@ -128,14 +128,14 @@ static PyObject* Folder_get_messages(clawsmail_FolderObject *self, PyObject *arg
 static PyObject* get_name(clawsmail_FolderObject *self, void *closure)
 {
   if(self->folderitem && self->folderitem->name)
-    return PyBytes_FromString(self->folderitem->name);
+    return PyUnicode_FromString(self->folderitem->name);
   Py_RETURN_NONE;
 }
 
 static PyObject* get_mailbox_name(clawsmail_FolderObject *self, void *closure)
 {
   if(self->folderitem && self->folderitem->folder && self->folderitem->folder->name)
-    return PyBytes_FromString(self->folderitem->folder->name);
+    return PyUnicode_FromString(self->folderitem->folder->name);
   Py_RETURN_NONE;
 }
 
@@ -154,7 +154,7 @@ static PyObject* get_identifier(clawsmail_FolderObject *self, void *closure)
     id = folder_item_get_identifier(self->folderitem);
     if(id) {
       PyObject *retval;
-      retval = PyBytes_FromString(id);
+      retval = PyUnicode_FromString(id);
       g_free(id);
       return retval;
     }
@@ -169,7 +169,7 @@ static PyObject* get_path(clawsmail_FolderObject *self, void *closure)
     path = folder_item_get_path(self->folderitem);
     if(path) {
       PyObject *retval;
-      retval = PyBytes_FromString(path);
+      retval = PyUnicode_FromString(path);
       g_free(path);
       return retval;
     }

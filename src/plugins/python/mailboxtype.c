@@ -47,14 +47,14 @@ static void Mailbox_dealloc(clawsmail_MailboxObject* self)
 static PyObject* Mailbox_str(clawsmail_MailboxObject *self)
 {
   if(self->folder && self->folder->name)
-    return PyBytes_FromFormat("Mailbox: %s", self->folder->name);
+    return PyUnicode_FromFormat("Mailbox: %s", self->folder->name);
   Py_RETURN_NONE;
 }
 
 static PyObject* get_name(clawsmail_MailboxObject *self, void *closure)
 {
   if(self->folder && self->folder->name)
-    return PyBytes_FromString(self->folder->name);
+    return PyUnicode_FromString(self->folder->name);
   Py_RETURN_NONE;
 }
 
