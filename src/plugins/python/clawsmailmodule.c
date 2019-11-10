@@ -905,23 +905,23 @@ static gboolean add_miscstuff(PyObject *module)
 
 
 static struct PyModuleDef moduledef = {
-	PyModuleDef_HEAD_INIT,
-	"clawsmail",
-	"This module can be used to access some of Claws Mail's data structures\n"
-		"in order to extend or modify the user interface or automate repetitive tasks.\n"
-		"\n"
-		"Whenever possible, the interface works with standard GTK+ widgets\n"
-		"via the PyGTK bindings, so you can refer to the GTK+ / PyGTK documentation\n"
-		"to find out about all possible options.\n"
-		"\n"
-		"The interface to Claws Mail in this module is extended on a 'as-needed' basis.\n"
-		"If you're missing something specific, try contacting the author.",
-	0,
-	ClawsMailMethods,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+  PyModuleDef_HEAD_INIT,
+  "clawsmail",
+  "This module can be used to access some of Claws Mail's data structures\n"
+  "in order to extend or modify the user interface or automate repetitive tasks.\n"
+  "\n"
+  "Whenever possible, the interface works with standard GTK+ widgets\n"
+  "via the PyGTK bindings, so you can refer to the GTK+ / PyGTK documentation\n"
+  "to find out about all possible options.\n"
+  "\n"
+  "The interface to Claws Mail in this module is extended on a 'as-needed' basis.\n"
+  "If you're missing something specific, try contacting the author.",
+  0,
+  ClawsMailMethods,
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 PyMODINIT_FUNC initclawsmail(void)

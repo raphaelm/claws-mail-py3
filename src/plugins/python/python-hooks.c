@@ -124,15 +124,15 @@ is_blacklisted(void)
 #endif // ENABLE_PYTHON
 
 static struct PyModuleDef moduledef = {
-	PyModuleDef_HEAD_INIT,
-	"parasite",
+    PyModuleDef_HEAD_INIT,
+    "parasite",
     NULL,
-	-1,
-	parasite_python_methods,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+    -1,
+    parasite_python_methods,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
 
 PyMODINIT_FUNC
@@ -207,33 +207,8 @@ parasite_python_init(char **error)
 
     pygtk = PyImport_ImportModule("gi");
 
-    if (pygtk != NULL)
+    if (pygtk == NULL)
     {
-        /*
-        PyObject *module_dict = PyModule_GetDict(pygtk);
-        PyObject *cobject = PyDict_GetItemString(module_dict, "_PyGtk_API");
-*/
-        /*
-         * This seems to be NULL when we're running a PyGTK program.
-         * We really need to find out why.
-         */
-  /*      if (cobject != NULL)
-        {
-            if (PyCapsule_CheckExact(cobject)) {
-                _PyGtk_API = (struct _PyGtk_FunctionStruct*)
-                PyCapsule_GetPointer(cobject, "gtk._gtk._PyGtk_API");
-            }
-#if PY_VERSION_HEX >= 0x02070000
-            else if (PyCapsule_IsValid(cobject, "gtk._gtk._PyGtk_API")) {
-                _PyGtk_API = (struct _PyGtk_FunctionStruct*)PyCapsule_GetPointer(cobject, "gtk._gtk._PyGtk_API");
-            }
-#endif
-            else {
-              *error = g_strdup("Parasite: Could not find _PyGtk_API object");
-                return 0;
-            }
-        }*/
-    } else {
         *error = g_strdup("Parasite: Could not import gi");
         dlclose(python_dlhandle);
         python_dlhandle = NULL;
