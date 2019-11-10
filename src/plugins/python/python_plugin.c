@@ -688,7 +688,7 @@ gint plugin_init(gchar **error)
 
   /* register moduke */
   PyImport_AppendInittab("clawsmail", initclawsmail);
-  PyImport_AppendInittab("parasite", parasite_python_init);
+  PyImport_AppendInittab("parasite", parasite_python_module_init);
 
   /* initialize python interpreter */
   Py_Initialize();
@@ -700,6 +700,14 @@ gint plugin_init(gchar **error)
 
   if(PyRun_SimpleString("import clawsmail") == -1) {
     *error = g_strdup("Error importing the clawsmail module");
+    goto err;
+  }
+
+  /* initialize python interactive shell */
+  log_handler = g_log_set_handler(NULL, G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO, log_func, NULL);
+  parasite_retval = parasite_python_init(error);
+  g_log_remove_handler(NULL, log_handler);
+  if(!parasite_retval) {
     goto err;
   }
 

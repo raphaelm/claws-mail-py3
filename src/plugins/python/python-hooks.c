@@ -135,12 +135,21 @@ static struct PyModuleDef moduledef = {
 	NULL
 };
 
-PyObject*
+PyMODINIT_FUNC
+parasite_python_module_init(void)
+{
+#ifdef ENABLE_PYTHON
+    return PyModule_Create(&moduledef);
+#endif // ENABLE_PYTHON
+    return NULL;
+}
+
+int
 parasite_python_init(char **error)
 {
 #ifdef ENABLE_PYTHON
     struct sigaction old_sigint;
-    PyObject *pygtk, *module;
+    PyObject *pygtk;
 
     if (is_blacklisted()) {
       *error = g_strdup("Application is blacklisted");
@@ -163,8 +172,6 @@ parasite_python_init(char **error)
 
     if (!Py_IsInitialized())
         Py_Initialize();
-
-    module = PyModule_Create(&moduledef);
 
     sigaction(SIGINT, &old_sigint, NULL);
 
@@ -198,24 +205,19 @@ parasite_python_init(char **error)
       return 0;
     }
 
-    if (!pygobject_init(-1, -1, -1)) {
-        dlclose(python_dlhandle);
-        python_dlhandle = NULL;
-        return 0;
-    }
-
-    pygtk = PyImport_ImportModule("gtk");
+    pygtk = PyImport_ImportModule("gi");
 
     if (pygtk != NULL)
     {
+        /*
         PyObject *module_dict = PyModule_GetDict(pygtk);
         PyObject *cobject = PyDict_GetItemString(module_dict, "_PyGtk_API");
-
+*/
         /*
          * This seems to be NULL when we're running a PyGTK program.
          * We really need to find out why.
          */
-        if (cobject != NULL)
+  /*      if (cobject != NULL)
         {
             if (PyCapsule_CheckExact(cobject)) {
                 _PyGtk_API = (struct _PyGtk_FunctionStruct*)
@@ -230,18 +232,17 @@ parasite_python_init(char **error)
               *error = g_strdup("Parasite: Could not find _PyGtk_API object");
                 return 0;
             }
-        }
+        }*/
     } else {
-        *error = g_strdup("Parasite: Could not import gtk");
+        *error = g_strdup("Parasite: Could not import gi");
         dlclose(python_dlhandle);
         python_dlhandle = NULL;
         return 0;
     }
 
     python_enabled = TRUE;
-    return module;
 #endif // ENABLE_PYTHON
-    return NULL;
+    return !0;
 }
 
 void
