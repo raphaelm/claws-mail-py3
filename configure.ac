@@ -1331,7 +1331,7 @@ AM_PATH_PYTHON([2.5], [
 	fi
 	if test x"$PYTHON_CONFIG" != x""; then
 		PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
-		PYTHON_LIBS=`$PYTHON_CONFIG --libs`
+		PYTHON_LIBS=`$PYTHON_CONFIG --libs --embed`
 		PYTHON_PREFIX=`$PYTHON_CONFIG --prefix`
 		HAVE_PYTHON=yes
 	else
